@@ -14,8 +14,15 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Icons } from '@/components/ui/icons'
 import { cn } from '@/lib/utils'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import { useState } from 'react'
 
 export default function SignUpPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword(prevState => !prevState);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="grid w-full grow items-center px-4 sm:justify-center">
@@ -72,9 +79,20 @@ export default function SignUpPage() {
                         <Clerk.Label asChild>
                           <Label>Password</Label>
                         </Clerk.Label>
-                        <Clerk.Input type="password" required asChild>
-                          <Input />
-                        </Clerk.Input>
+                        <div className="relative">
+                          <Clerk.Input type={showPassword ? "text" : "password"} required asChild>
+                            <Input />
+                          </Clerk.Input>
+                          <button
+                            type="button"
+                            tabIndex={-1}
+                            onClick={togglePasswordVisibility}
+                            className="absolute inset-y-0 right-0 flex items-center px-2 text-muted-foreground focus:outline-none cursor-pointer"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                          >
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                          </button>
+                        </div>
                         <Clerk.FieldError className="block text-sm text-destructive" />
                       </Clerk.Field>
                     </CardContent>
@@ -121,7 +139,7 @@ export default function SignUpPage() {
                     <CardFooter>
                       <div className="grid w-full gap-y-4">
                         <SignUp.Action submit asChild>
-                          <Button disabled={isGlobalLoading}>
+                          <Button disabled={isGlobalLoading} className="cursor-pointer">
                             <Clerk.Loading>
                               {(isLoading) => {
                                 return isLoading ? (
@@ -201,7 +219,7 @@ export default function SignUpPage() {
                       <CardFooter>
                         <div className="grid w-full gap-y-4">
                           <SignUp.Action submit asChild>
-                            <Button disabled={isGlobalLoading}>
+                            <Button disabled={isGlobalLoading} className="cursor-pointer">
                               <Clerk.Loading>
                                 {(isLoading) => {
                                   return isLoading ? (

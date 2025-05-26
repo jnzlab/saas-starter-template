@@ -13,8 +13,14 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Icons } from '@/components/ui/icons'
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useState } from 'react'
 
 export default function SignInPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword(prevState => !prevState);
+  };
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="grid w-full grow items-center px-4 sm:justify-center">
@@ -29,28 +35,28 @@ export default function SignInPage() {
                       <CardDescription>Welcome back! Please sign in to continue</CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-y-4">
-                        <Clerk.Connection name="google" asChild>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            type="button"
-                            disabled={isGlobalLoading}
-                            className="cursor-pointer"
-                          >
-                            <Clerk.Loading scope="provider:google">
-                              {(isLoading) =>
-                                isLoading ? (
-                                  <Icons.spinner className="size-4 animate-spin" />
-                                ) : (
-                                  <>
-                                    <Icons.google className="mr-2 size-4" />
-                                    Continue with Google
-                                  </>
-                                )
-                              }
-                            </Clerk.Loading>
-                          </Button>
-                        </Clerk.Connection>
+                      <Clerk.Connection name="google" asChild>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          type="button"
+                          disabled={isGlobalLoading}
+                          className="cursor-pointer"
+                        >
+                          <Clerk.Loading scope="provider:google">
+                            {(isLoading) =>
+                              isLoading ? (
+                                <Icons.spinner className="size-4 animate-spin" />
+                              ) : (
+                                <>
+                                  <Icons.google className="mr-2 size-4" />
+                                  Continue with Google
+                                </>
+                              )
+                            }
+                          </Clerk.Loading>
+                        </Button>
+                      </Clerk.Connection>
                       <p className="flex items-center gap-x-3 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
                         or
                       </p>
@@ -90,6 +96,33 @@ export default function SignInPage() {
                   </Card>
                 </SignIn.Step>
 
+                <SignIn.Step name="sso-callback">
+                  <Card className="w-full sm:w-96">
+                    <CardHeader>
+                      <CardTitle>Verify your identity</CardTitle>
+                      <CardDescription>Complete the captcha to continue</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <SignIn.Captcha />
+                        <SignIn.Action submit asChild>
+                          <Button disabled={isGlobalLoading} className="cursor-pointer">
+                            <Clerk.Loading>
+                              {(isLoading) => {
+                                return isLoading ? (
+                                  <Icons.spinner className="size-4 animate-spin" />
+                                ) : (
+                                  'Verify'
+                                )
+                              }}
+                            </Clerk.Loading>
+                          </Button>
+                        </SignIn.Action>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </SignIn.Step>
+
                 <SignIn.Step name="choose-strategy">
                   <Card className="w-full sm:w-96">
                     <CardHeader>
@@ -113,7 +146,7 @@ export default function SignInPage() {
                     <CardFooter>
                       <div className="grid w-full gap-y-4">
                         <SignIn.Action navigate="previous" asChild>
-                          <Button disabled={isGlobalLoading}>
+                          <Button disabled={isGlobalLoading} className="cursor-pointer">
                             <Clerk.Loading>
                               {(isLoading) => {
                                 return isLoading ? (
@@ -147,16 +180,27 @@ export default function SignInPage() {
                           <Clerk.Label asChild>
                             <Label>Password</Label>
                           </Clerk.Label>
-                          <Clerk.Input type="password" asChild>
-                            <Input />
-                          </Clerk.Input>
+                          <div className="relative">
+                            <Clerk.Input type={showPassword ? "text" : "password"} asChild>
+                              <Input />
+                            </Clerk.Input>
+                            <button
+                              type="button"
+                              tabIndex={-1}
+                              onClick={togglePasswordVisibility}
+                              className="absolute inset-y-0 right-0 flex items-center px-2 text-muted-foreground focus:outline-none cursor-pointer"
+                              aria-label={showPassword ? "Hide password" : "Show password"}
+                            >
+                              {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            </button>
+                          </div>
                           <Clerk.FieldError className="block text-sm text-destructive" />
                         </Clerk.Field>
                       </CardContent>
                       <CardFooter>
                         <div className="grid w-full gap-y-4">
                           <SignIn.Action submit asChild>
-                            <Button disabled={isGlobalLoading}>
+                            <Button disabled={isGlobalLoading} className="cursor-pointer">
                               <Clerk.Loading>
                                 {(isLoading) => {
                                   return isLoading ? (
@@ -169,7 +213,7 @@ export default function SignInPage() {
                             </Button>
                           </SignIn.Action>
                           <SignIn.Action navigate="choose-strategy" asChild>
-                            <Button type="button" size="sm" variant="link">
+                            <Button type="button" size="sm" variant="link" className="cursor-pointer">
                               Use another method
                             </Button>
                           </SignIn.Action>
@@ -232,7 +276,7 @@ export default function SignInPage() {
                       <CardFooter>
                         <div className="grid w-full gap-y-4">
                           <SignIn.Action submit asChild>
-                            <Button disabled={isGlobalLoading}>
+                            <Button disabled={isGlobalLoading} className="cursor-pointer">
                               <Clerk.Loading>
                                 {(isLoading) => {
                                   return isLoading ? (
@@ -245,7 +289,7 @@ export default function SignInPage() {
                             </Button>
                           </SignIn.Action>
                           <SignIn.Action navigate="choose-strategy" asChild>
-                            <Button size="sm" variant="link">
+                            <Button size="sm" variant="link" className="cursor-pointer">
                               Use another method
                             </Button>
                           </SignIn.Action>
